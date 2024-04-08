@@ -40,6 +40,11 @@ func runWebServer() {
 		log.Fatal(err)
 	}
 
+	err = config.InitEnv()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	var server *web.Server
 
 	server = web.NewServer()

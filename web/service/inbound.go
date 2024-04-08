@@ -17,17 +17,40 @@ type InboundService struct {
 func (s *InboundService) GetInbounds(userId int) ([]*model.Inbound, error) {
 	db := database.GetDB()
 	var inbounds []*model.Inbound
-	err := db.Model(model.Inbound{}).Where("user_id = ?", userId).Find(&inbounds).Error
+	err := db.Model(&model.Inbound{}).Where("user_id = ?", userId).Find(&inbounds).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 	return inbounds, nil
 }
 
+func (s *InboundService) GetInboundByTag(tag string) ([]*model.Inbound, error) {
+	db := database.GetDB()
+	var inbounds []*model.Inbound
+	err := db.Model(&model.Inbound{}).Where("tag = ?", tag).Find(&inbounds).Error
+	if err != nil {
+		return nil, err
+	}
+	return inbounds, nil
+}
+
+func (s *InboundService) CheckPortExist(port int) (bool, error) {
+	db := database.GetDB()
+	var count int64
+	err := db.Model(&model.Inbound{}).Where("port = ?", port).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	if count > 0 {
+		return true, nil
+	}
+	return false, nil
+}
+
 func (s *InboundService) GetAllInbounds() ([]*model.Inbound, error) {
 	db := database.GetDB()
 	var inbounds []*model.Inbound
-	err := db.Model(model.Inbound{}).Find(&inbounds).Error
+	err := db.Model(&model.Inbound{}).Find(&inbounds).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -36,7 +59,7 @@ func (s *InboundService) GetAllInbounds() ([]*model.Inbound, error) {
 
 func (s *InboundService) checkPortExist(port int, ignoreId int) (bool, error) {
 	db := database.GetDB()
-	db = db.Model(model.Inbound{}).Where("port = ?", port)
+	db = db.Model(&model.Inbound{}).Where("port = ?", port)
 	if ignoreId > 0 {
 		db = db.Where("id != ?", ignoreId)
 	}
@@ -94,13 +117,13 @@ func (s *InboundService) AddInbounds(inbounds []*model.Inbound) error {
 
 func (s *InboundService) DelInbound(id int) error {
 	db := database.GetDB()
-	return db.Delete(model.Inbound{}, id).Error
+	return db.Delete(&model.Inbound{}, id).Error
 }
 
 func (s *InboundService) GetInbound(id int) (*model.Inbound, error) {
 	db := database.GetDB()
 	inbound := &model.Inbound{}
-	err := db.Model(model.Inbound{}).First(inbound, id).Error
+	err := db.Model(&model.Inbound{}).First(inbound, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -138,12 +161,21 @@ func (s *InboundService) UpdateInbound(inbound *model.Inbound) error {
 	return db.Save(oldInbound).Error
 }
 
+func (s *InboundService) UpdateMisesInbound(inboundId int, misesOrderId string, expiryTime int64) error {
+	db := database.GetDB()
+	result := db.Model(&model.Inbound{}).Where("id = ?", inboundId).Updates(map[string]interface{}{
+		"mises_order_id": misesOrderId,
+		"expiry_time": expiryTime,
+	})
+	return result.Error
+}
+
 func (s *InboundService) AddTraffic(traffics []*xray.Traffic) (err error) {
 	if len(traffics) == 0 {
 		return nil
 	}
 	db := database.GetDB()
-	db = db.Model(model.Inbound{})
+	db = db.Model(&model.Inbound{})
 	tx := db.Begin()
 	defer func() {
 		if err != nil {
@@ -169,7 +201,7 @@ func (s *InboundService) AddTraffic(traffics []*xray.Traffic) (err error) {
 func (s *InboundService) DisableInvalidInbounds() (int64, error) {
 	db := database.GetDB()
 	now := time.Now().Unix() * 1000
-	result := db.Model(model.Inbound{}).
+	result := db.Model(&model.Inbound{}).
 		Where("((total > 0 and up + down >= total) or (expiry_time > 0 and expiry_time <= ?)) and enable = ?", now, true).
 		Update("enable", false)
 	err := result.Error

@@ -41,3 +41,9 @@ func Seq(n int) string {
 	}
 	return string(runes)
 }
+
+func RandomIntRange(min, max int) int {
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+	return r.Intn(max-min+1) + min
+}
