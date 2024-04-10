@@ -120,6 +120,14 @@ func (s *InboundService) DelInbound(id int) error {
 	return db.Delete(&model.Inbound{}, id).Error
 }
 
+func (s *InboundService) DelInboundsByTags(tags []string) error {
+	if len(tags) == 0 {
+		return nil
+	}
+	db := database.GetDB()
+	return db.Where("tag IN ?", tags).Delete(&model.Inbound{}).Error
+}
+
 func (s *InboundService) GetInbound(id int) (*model.Inbound, error) {
 	db := database.GetDB()
 	inbound := &model.Inbound{}

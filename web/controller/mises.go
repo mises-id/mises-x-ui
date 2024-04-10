@@ -11,7 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 	"x-ui/config"
@@ -40,6 +39,10 @@ type AddInboundParam struct {
 
 type GetInboundsParam struct {
 	UserId     string `json:"userId"`
+}
+
+type DelInboundsParam struct {
+	UserIds    []string `json:"userIds"`
 }
 
 type MisesController struct {
@@ -327,19 +330,32 @@ func genVmessLink(inbound *model.Inbound, c *gin.Context, uuid string) (string, 
 	return sb.String(), nil
 }
 
-func genMisesTag(tagName string) string {
-	return fmt.Sprintf("inbound-mises-%s", tagName)
-}
-
 func (a *MisesController) delInbounds(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	param := new(DelInboundsParam)
+	err := c.ShouldBindJSON(param)
 	if err != nil {
 		jsonMsg(c, "删除", err)
 		return
 	}
-	err = a.inboundService.DelInbound(id)
-	jsonMsg(c, "删除", err)
-	if err == nil {
-		a.xrayService.SetToNeedRestart()
+	if len(param.UserIds) == 0 {
+		jsonMsg(c, "删除", errors.New("empty params"))
+		return
 	}
+	tags := make([]string, 0, len(param.UserIds))
+	for _, userId := range param.UserIds {
+		tags = append(tags, genMisesTag(userId))
+	}
+	if err := a.inboundService.DelInboundsByTags(tags); err != nil {
+		jsonMsg(c, "删除", err)
+		return
+	}
+
+	// set to restart
+	a.xrayService.SetToNeedRestart()
+
+	jsonObj(c, nil, nil)
+}
+
+func genMisesTag(tagName string) string {
+	return fmt.Sprintf("inbound-mises-%s", tagName)
 }
