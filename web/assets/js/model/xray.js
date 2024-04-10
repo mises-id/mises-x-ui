@@ -601,7 +601,7 @@ class Sniffing extends XrayCommonClass {
 }
 
 class Inbound extends XrayCommonClass {
-    constructor(port=RandomUtil.randomIntRange(10000, 60000),
+     constructor(port=RandomUtil.randomIntRange(10000, 60000),
                 listen='',
                 protocol=Protocols.VMESS,
                 settings=null,

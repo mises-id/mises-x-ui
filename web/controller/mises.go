@@ -158,7 +158,6 @@ func (a *MisesController) addInbound(c *gin.Context) {
 					time.Sleep(1 * time.Second)
 					continue
 				}
-				// todo: xray api update inbound
 			}
 			jsonObj(c, ms[0].MisesLink, nil)
 			return
@@ -179,13 +178,15 @@ func (a *MisesController) addInbound(c *gin.Context) {
 				time.Sleep(1 * time.Second)
 				continue
 			} else {
-				// todo: xray api add inbound
+				if err := a.xrayService.UpsertInboundInProcess(inbound); err != nil {
+					jsonMsg(c, "api add inbound", err)
+					return
+				}
 				jsonObj(c, inbound.MisesLink, nil)
 				return
 			}
 		}
 	}
-
 
 	//if err == nil {
 	//	a.xrayService.SetToNeedRestart()
@@ -327,7 +328,7 @@ func genVmessLink(inbound *model.Inbound, c *gin.Context, uuid string) (string, 
 }
 
 func genMisesTag(tagName string) string {
-	return fmt.Sprintf("mises-%s", tagName)
+	return fmt.Sprintf("inbound-mises-%s", tagName)
 }
 
 func (a *MisesController) delInbounds(c *gin.Context) {

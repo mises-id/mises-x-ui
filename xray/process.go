@@ -14,6 +14,7 @@ import (
 	"runtime"
 	"strings"
 	"time"
+	"x-ui/logger"
 	"x-ui/util/common"
 
 	"github.com/Workiva/go-datastructures/queue"
@@ -33,6 +34,10 @@ func GetBinaryPath() string {
 
 func GetConfigPath() string {
 	return "bin/config.json"
+}
+
+func GetAddInboundFilePath(fileName string) string {
+	return fmt.Sprintf("bin/adi-%s.json", fileName)
 }
 
 func GetGeositePath() string {
@@ -276,4 +281,56 @@ func (p *process) GetTraffic(reset bool) ([]*Traffic, error) {
 	}
 
 	return traffics, nil
+}
+
+func (p *process) AddInbound(inbound *InboundConfig) error {
+	// create json file
+	xrayConfig := &Config{}
+	xrayConfig.InboundConfigs = append(xrayConfig.InboundConfigs, *inbound)
+	data, err := json.MarshalIndent(xrayConfig, "", "  ")
+	if err != nil {
+		return fmt.Errorf("生成 xray 配置文件失败: %w", err)
+	}
+	configPath := GetAddInboundFilePath(inbound.Tag)
+	err = os.WriteFile(configPath, data, fs.ModePerm)
+	if err != nil {
+		return fmt.Errorf("写入配置文件失败: %w", err)
+	}
+	logger.Infof("adi json file created: %s", configPath)
+	defer func() {
+		// delete the file and log
+		if err := os.Remove(configPath); err != nil {
+			logger.Errorf("delete adi json file, path:%s error:%s", configPath, err)
+			return
+		}
+		logger.Infof("adi json file deleted: %s", configPath)
+	}()
+
+	// exec
+	cmd := exec.Command(GetBinaryPath(), "api", "adi", "-s", fmt.Sprintf("127.0.0.1:%d", p.apiPort), configPath)
+	bs, err := cmd.CombinedOutput()
+	strCmd := cmd.String()
+	logger.Infof("cmd:%s output:%s", strCmd, string(bs))
+	if err != nil {
+		return fmt.Errorf("执行api adi失败, cmd:%s error:%w", strCmd, err)
+	}
+
+	// success
+	logger.Infof("api adi success, cmd:%s", strCmd)
+	return nil
+}
+
+func (p *process) RemoveInbound(tag string) error {
+	if tag == "" {
+		return errors.New("tag error")
+	}
+	// exec
+	cmd := exec.Command(GetBinaryPath(), "api", "rmi", "-s", fmt.Sprintf("127.0.0.1:%d", p.apiPort), tag)
+	bs, err := cmd.CombinedOutput()
+	strCmd := cmd.String()
+	logger.Infof("cmd:%s output:%s", strCmd, string(bs))
+	if err != nil {
+		return fmt.Errorf("执行api rmi失败, cmd:%s error:%w", strCmd, err)
+	}
+	return nil
 }

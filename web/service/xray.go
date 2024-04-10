@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"sync"
+	"x-ui/database/model"
 	"x-ui/logger"
 	"x-ui/xray"
 
@@ -83,6 +84,28 @@ func (s *XrayService) GetXrayTraffic() ([]*xray.Traffic, error) {
 		return nil, errors.New("xray is not running")
 	}
 	return p.GetTraffic(true)
+}
+
+func (s *XrayService) AddInboundToProcess(inbound *model.Inbound) error {
+	if !s.IsXrayRunning() {
+		return errors.New("xray is not running")
+	}
+	return p.AddInbound(inbound.GenXrayInboundConfig())
+}
+
+func (s *XrayService) RemoveInboundFromProcess(tag string) error {
+	if !s.IsXrayRunning() {
+		return errors.New("xray is not running")
+	}
+	return p.RemoveInbound(tag)
+}
+
+func (s *XrayService) UpsertInboundInProcess(inbound *model.Inbound) error {
+	if !s.IsXrayRunning() {
+		return errors.New("xray is not running")
+	}
+	_ = p.RemoveInbound(inbound.Tag)
+	return p.AddInbound(inbound.GenXrayInboundConfig())
 }
 
 func (s *XrayService) RestartXray(isForce bool) error {
