@@ -62,9 +62,9 @@ func (a *MisesController) initRouter(g *gin.RouterGroup) {
 	g = g.Group("/mises")
 	g.Use(a.auth)
 
-	g.GET("/inbounds", a.getInbounds)
-	g.POST("/inbounds", a.addInbound)
-	g.DELETE("/inbounds", a.delInbounds)
+	g.POST("/get_inbounds", a.getInbounds)
+	g.POST("/add_inbounds", a.addInbound)
+	g.POST("/del_inbounds", a.delInbounds)
 }
 
 func (a *MisesController) auth(c *gin.Context) {
