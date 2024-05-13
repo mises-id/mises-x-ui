@@ -9,7 +9,7 @@ type XUIController struct {
 
 	inboundController *InboundController
 	settingController *SettingController
-	misesController   *MisesController
+	//misesController   *MisesController
 }
 
 func NewXUIController(g *gin.RouterGroup) *XUIController {
@@ -28,7 +28,7 @@ func (a *XUIController) initRouter(g *gin.RouterGroup) {
 
 	a.inboundController = NewInboundController(g)
 	a.settingController = NewSettingController(g)
-	a.misesController = NewMisesController(g)
+	//a.misesController = NewMisesController(g)
 }
 
 func (a *XUIController) index(c *gin.Context) {
