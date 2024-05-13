@@ -27,7 +27,7 @@ func InitEnv() error {
 	if err != nil {
 		return err
 	}
-	Envs.RootPath = projectRootPath
+
 	envPath := projectRootPath + "/.env"
 	if _, err := os.Stat(envPath); err != nil {
 		//fmt.Println("Error Stat:", err)
@@ -39,6 +39,8 @@ func InitEnv() error {
 	if err != nil {
 		return err
 	}
+	Envs.RootPath = projectRootPath
+	
 	if Envs.RawMisesPublicKey == "" {
 		return fmt.Errorf("public key is empty")
 	}
