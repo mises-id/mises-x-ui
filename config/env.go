@@ -40,7 +40,7 @@ func InitEnv() error {
 		return err
 	}
 	Envs.RootPath = projectRootPath
-	
+
 	if Envs.RawMisesPublicKey == "" {
 		return fmt.Errorf("public key is empty")
 	}

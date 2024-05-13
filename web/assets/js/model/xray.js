@@ -601,7 +601,8 @@ class Sniffing extends XrayCommonClass {
 }
 
 class Inbound extends XrayCommonClass {
-     constructor(port=RandomUtil.randomIntRange(10000, 60000),
+     // constructor(port=RandomUtil.randomIntRange(10000, 60000),
+    constructor(port=RandomUtil.randomIntRange(56000, 56500),
                 listen='',
                 protocol=Protocols.VMESS,
                 settings=null,
@@ -872,7 +873,8 @@ class Inbound extends XrayCommonClass {
     }
 
     reset() {
-        this.port = RandomUtil.randomIntRange(10000, 60000);
+        // this.port = RandomUtil.randomIntRange(10000, 60000);
+        this.port = RandomUtil.randomIntRange(56000, 56500);
         this.listen = '';
         this.protocol = Protocols.VMESS;
         this.settings = Inbound.Settings.getSettings(Protocols.VMESS);

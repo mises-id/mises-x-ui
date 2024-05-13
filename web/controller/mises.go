@@ -24,8 +24,10 @@ import (
 
 const (
 	MisesApiUserId       int            = 0
-	MisesMinPort         int            = 10000
-	MisesMaxPort         int            = 60000
+	//MisesMinPort         int            = 10000
+	//MisesMaxPort         int            = 60000
+	MisesMinPort         int            = 56000
+	MisesMaxPort         int            = 56500
 	MisesDefaultRemark   string         = "mises_user"
 	MisesDefaultProtocol model.Protocol = model.VMess
 	MisesDefaultNetwork  string         = "tcp"
