@@ -135,7 +135,7 @@ func (a *MisesController) getInbounds(c *gin.Context) {
 
 func (a *MisesController) addInbound(c *gin.Context) {
 	param := new(AddInboundParam)
-	err := c.ShouldBindJSON(param)
+	err := c.ShouldBind(param)
 	if err != nil {
 		logger.Errorf("ShouldBindJSON:", err)
 		jsonMsg(c, "添加", err)
