@@ -188,10 +188,10 @@ func (a *MisesController) addInbound(c *gin.Context) {
 				time.Sleep(1 * time.Second)
 				continue
 			} else {
-				//if err := a.xrayService.UpsertInboundInProcess(inbound); err != nil {
-				//	jsonMsg(c, "api add inbound", err)
-				//	return
-				//}
+				if err := a.xrayService.UpsertInboundInProcess(inbound); err != nil {
+					jsonMsg(c, "api add inbound", err)
+					return
+				}
 				jsonObj(c, inbound.MisesLink, nil)
 				return
 			}
