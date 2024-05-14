@@ -137,10 +137,12 @@ func (a *MisesController) addInbound(c *gin.Context) {
 	param := new(AddInboundParam)
 	err := c.ShouldBindJSON(param)
 	if err != nil {
+		logger.Errorf("ShouldBindJSON:", err)
 		jsonMsg(c, "添加", err)
 		return
 	}
 	if param.UserId == "" || param.OrderId == "" || param.ExpiryTime == 0  {
+		logger.Errorf("param check:", errors.New("params error"))
 		jsonMsg(c, "添加", errors.New("params error"))
 		return
 	}
