@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"bytes"
 	"crypto"
 	"crypto/rsa"
 	"crypto/sha256"
@@ -88,6 +89,8 @@ func (a *MisesController) auth(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	c.Next()
 }
