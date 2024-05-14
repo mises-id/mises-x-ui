@@ -313,7 +313,7 @@ func genVmessLink(inbound *model.Inbound, c *gin.Context, uuid string) (string, 
 
 	// todo: 需确认该配置是否适用于生产环境
 	link := map[string]interface{}{
-		"v": '2',
+		"v": "2",
 		"ps": inbound.Remark,
 		"add": address,
 		"port": inbound.Port,

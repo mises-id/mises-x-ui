@@ -5,6 +5,7 @@ import (
 	"time"
 	"x-ui/database"
 	"x-ui/database/model"
+	"x-ui/logger"
 	"x-ui/util/common"
 	"x-ui/xray"
 
@@ -80,6 +81,9 @@ func (s *InboundService) AddInbound(inbound *model.Inbound) error {
 		return common.NewError("端口已存在:", inbound.Port)
 	}
 	db := database.GetDB()
+
+	logger.Error("inbound.enable:", inbound.Enable)
+
 	return db.Save(inbound).Error
 }
 
