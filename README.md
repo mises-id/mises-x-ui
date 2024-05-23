@@ -73,7 +73,7 @@ docker build -t x-ui .
 ## 手动编译
 
 ```shell
-CC=gcc GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -v -o x-ui -ldflags="-extld=$CC"
+CC=gcc GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -o x-ui
 ```
 
 ## SSL证书申请
