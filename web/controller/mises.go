@@ -29,7 +29,7 @@ const (
 	//MisesMaxPort         int            = 60000
 	MisesMinPort         int            = 56000
 	MisesMaxPort         int            = 56500
-	MisesDefaultRemark   string         = "mises_user"
+	MisesDefaultRemark   string         = "Mises VPN"
 	MisesDefaultProtocol model.Protocol = model.VMess
 	MisesDefaultNetwork  string         = "tcp"
 )
@@ -311,10 +311,10 @@ func genVmessLink(inbound *model.Inbound, c *gin.Context, uuid string) (string, 
 		}
 	}
 
-	// todo: 需确认该配置是否适用于生产环境
 	link := map[string]interface{}{
 		"v": "2",
-		"ps": inbound.Remark,
+		//"ps": inbound.Remark,
+		"ps": address,
 		"add": address,
 		"port": inbound.Port,
 		"id": uuid,
