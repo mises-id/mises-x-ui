@@ -11,10 +11,11 @@ import (
 )
 
 type Env struct {
-	RootPath          string
-	RawMisesPublicKey string `env:"MISES_PUBLIC_KEY" envDefault:""`
-	MisesPublicKey    *rsa.PublicKey
-	ServerForVpnLink  string `env:"SERVER_FOR_VPN_LINK" envDefault:""`
+	RootPath             string
+	RawMisesPublicKey    string `env:"MISES_PUBLIC_KEY" envDefault:""`
+	MisesPublicKey       *rsa.PublicKey
+	ServerForVpnLink     string `env:"SERVER_FOR_VPN_LINK" envDefault:""`
+	ServerNameForVpnLink string `env:"SERVER_NAME_FOR_VPN_LINK" envDefault:""`
 }
 
 var (

@@ -311,10 +311,14 @@ func genVmessLink(inbound *model.Inbound, c *gin.Context, uuid string) (string, 
 		}
 	}
 
+	ps := inbound.Remark
+	if config.Envs.ServerNameForVpnLink != "" {
+		ps = config.Envs.ServerNameForVpnLink
+	}
+
 	link := map[string]interface{}{
 		"v": "2",
-		//"ps": inbound.Remark,
-		"ps": address,
+		"ps": ps,
 		"add": address,
 		"port": inbound.Port,
 		"id": uuid,
